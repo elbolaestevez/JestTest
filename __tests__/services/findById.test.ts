@@ -6,8 +6,16 @@ import { TaskRepository } from "../../src/repositories/task.repository";
 import TaskModel from "../../src/models/Task.model";
 
 dotenv.config();
+const uri = process.env.MONGO_URI || "";
 
 describe("findById", () => {
+  beforeAll(async () => {
+    await mongoose.connect(uri);
+  });
+  afterAll(async () => {
+    await mongoose.disconnect();
+  });
+
   it("invalid id for task", async () => {
     function unknownToStringObjectId(value: unknown): mongoose.Types.ObjectId {
       if (typeof value === "string") {

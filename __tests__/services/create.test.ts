@@ -7,8 +7,15 @@ import { ErrorResponse } from "../../src/types/error.types";
 import { generateRandomWord } from "../../src/utils/generateRandomWord";
 
 dotenv.config();
+const uri = process.env.MONGO_URI2 || "";
 
 describe("create", () => {
+  beforeAll(async () => {
+    await mongoose.connect(uri);
+  });
+  afterAll(async () => {
+    await mongoose.disconnect();
+  });
   const title = generateRandomWord(8);
 
   it("should create a new task", async () => {

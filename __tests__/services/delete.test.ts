@@ -6,13 +6,22 @@ import { generateRandomWord } from "../../src/utils/generateRandomWord";
 import { TaskRepository } from "../../src/repositories/task.repository";
 
 dotenv.config();
+const uri = process.env.MONGO_URI2 || "";
 
 describe("delete task", () => {
+  beforeAll(async () => {
+    await mongoose.connect(uri);
+  });
+  afterAll(async () => {
+    await mongoose.disconnect();
+  });
   it("delete task by id", async () => {
     const randomTitle = generateRandomWord(6);
-    jest.spyOn(TaskRepository, "deleteTask").mockResolvedValue({
-      message: "Task was eliminated successfully",
-    } as any);
+    jest
+      .spyOn(TaskRepository, "deleteTask")
+      .mockResolvedValue({
+        message: "Task was eliminated successfully",
+      } as any);
 
     const taskBody: TaskRequest = {
       title: randomTitle,

@@ -6,8 +6,15 @@ import { generateRandomWord } from "../../src/utils/generateRandomWord";
 import { ErrorResponse } from "../../src/types/error.types";
 
 dotenv.config();
+const uri = process.env.MONGO_URI2 || "";
 
 describe("update task", () => {
+  beforeAll(async () => {
+    await mongoose.connect(uri);
+  });
+  afterAll(async () => {
+    await mongoose.disconnect();
+  });
   const randomTitle = generateRandomWord(6);
 
   it("update task by invalid id", async () => {
