@@ -1,0 +1,13 @@
+# Ignorar archivos y directorios generados automáticamente
+node_modules/
+dist/
+.vscode/
+.idea/
+
+# Ignorar archivos de configuración específicos del proyecto
+.env
+.env.local
+
+# Ignorar archivos de registro y caché
+*.log
+.cache/
