@@ -38,7 +38,6 @@ describe("create", () => {
   });
   it("should find all tasks", async () => {
     const newServiceCreateMock = jest.spyOn(TaskService, "findAll");
-    const userId = new Types.ObjectId("650b62bf5dff02dce611faa0");
 
     const tasks = [
       {

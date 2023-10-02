@@ -10,6 +10,7 @@ export const taskValidator = Joi.object({
   description: Joi.string().required(),
   user: Joi.string().length(24).hex().required(),
 });
+
 export function isValidMongoId(id: mongoose.Types.ObjectId): boolean {
   return mongoose.Types.ObjectId.isValid(id);
 }
@@ -21,3 +22,15 @@ export const updateTaskValidator = Joi.object({
     .valid("pendiente", "en-progreso", "completada")
     .optional(),
 });
+
+export const statusValidator = Joi.string().valid(
+  "pendiente",
+  "en-progreso",
+  "completada"
+);
+
+export function validateStatus(status: string) {
+  const { error } = statusValidator.validate(status);
+
+  return error;
+}

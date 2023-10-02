@@ -42,7 +42,7 @@ class TaskController {
       const tasks = await TaskService.findAll();
       if (tasks.length === 0) {
         return {
-          error: "No tasks found",
+          message: "No tasks found",
           code: 200,
         };
       }
@@ -138,18 +138,7 @@ class TaskController {
     next: NextFunction
   ) {
     const status = req.params.status;
-    enum TaskStatus {
-      Pendiente = "pendiente",
-      EnProgreso = "en-progreso",
-      Completada = "completada",
-    }
-    if (!Object.values(TaskStatus).includes(status)) {
-      const errorResponse: ErrorResponse = {
-        error: "Status no valid",
-        code: 400,
-      };
-      return res.status(errorResponse.code).json(errorResponse);
-    }
+
     try {
       const tasks = await TaskService.findByStatus(status);
 

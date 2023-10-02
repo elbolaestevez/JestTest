@@ -1,4 +1,3 @@
-import TaskModel from "../models/Task.model";
 import { TaskRequest, UpdateTaskRequest } from "../types/tasks.types";
 import { ErrorResponse } from "../types/error.types";
 import mongoose from "mongoose";
@@ -6,6 +5,7 @@ import {
   isValidMongoId,
   taskValidator,
   updateTaskValidator,
+  validateStatus,
 } from "../utils/validators";
 import { TaskRepository } from "../repositories/task.repository";
 
@@ -142,6 +142,14 @@ class TaskService {
   }
   static async findByStatus(status: string) {
     try {
+      const validationError = validateStatus(status);
+      if (validationError) {
+        const errorResponse: ErrorResponse = {
+          error: "Status no valid",
+          code: 400,
+        };
+        return errorResponse;
+      }
       const tasks = await TaskRepository.findTaskByStatus(status);
       if (tasks.length === 0) {
         const errorResponse: ErrorResponse = {

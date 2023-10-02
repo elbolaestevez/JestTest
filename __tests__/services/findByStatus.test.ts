@@ -44,4 +44,14 @@ describe("find tasks with status", () => {
       expect(task.error).toContain("Task not found");
     } catch (error) {}
   });
+  it("throws 'Task not found' when status is not find", async () => {
+    try {
+      const task = (await TaskService.findByStatus(
+        "completadaa"
+      )) as ErrorResponse;
+      expect(task.error).toContain("Status no valid");
+    } catch (error) {}
+  });
+ 
+
 });
