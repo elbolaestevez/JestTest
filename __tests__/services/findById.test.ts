@@ -25,7 +25,7 @@ describe("findById", () => {
       }
     }
 
-    const invalidTaskIdString = "650b6b7898261480c129b48e";
+    const invalidTaskIdString = "651a3a424eca23df6c0601bc";
     const invalidTaskId: mongoose.Types.ObjectId =
       unknownToStringObjectId(invalidTaskIdString);
 

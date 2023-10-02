@@ -14,7 +14,7 @@ describe("findOne", () => {
   });
 
   it("find task by id", async () => {
-    const validTaskId = new mongoose.Types.ObjectId("650b6b7898261480c129b48e");
+    const validTaskId = new mongoose.Types.ObjectId("651a3a424eca23df6c0601bc");
 
     const task = await TaskRepository.findById(validTaskId);
     expect(task).toBeDefined();
