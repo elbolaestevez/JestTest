@@ -42,9 +42,24 @@ describe("delete One", () => {
       mockResponse as any,
       mockNext
     );
-    expect(mockResponse.status).toHaveBeenCalledWith(200);
-    expect(mockResponse.json).toHaveBeenCalledWith({
-      message: "Task was eliminated successfully",
-    });
+
+    if (mockResponse.json) {
+      const jsonResponse = JSON.stringify(
+        (mockResponse.json as jest.Mock).mock.calls[0][0]
+      );
+
+      expect(jsonResponse).toEqual(
+        JSON.stringify({ message: "Task was eliminated successfully" })
+      );
+    }
+    if (mockResponse.status) {
+      const status = (
+        mockResponse.status as jest.MockedFunction<
+          (code: number) => Response<Record<string, any>, Record<string, any>>
+        >
+      ).mock.calls[0][0];
+
+      expect(status).toBe(200);
+    }
   });
 });

@@ -1,10 +1,16 @@
 import { UserRepository } from "../repositories/user.repository";
 import { RegisterRequest } from "../types/user.types";
 import { ErrorResponse } from "../types/error.types";
+import { registerRequestSchema } from "../utils/validators";
 
 class AuthService {
   static async register(userBody: RegisterRequest) {
     try {
+      const { error } = registerRequestSchema.validate(userBody);
+
+      if (error) {
+        return { error: error.details[0].message, code: 400 };
+      }
       const findUser = await UserRepository.findEmail(userBody.email);
       if (findUser) {
         const duplicateEmailError: ErrorResponse = {

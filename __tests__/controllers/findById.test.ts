@@ -51,12 +51,76 @@ describe("findOne", () => {
       mockResponse as any,
       mockNext
     );
-    expect(mockResponse.status).toHaveBeenCalledWith(200);
-    expect(mockResponse.json).toHaveBeenCalledWith({
-      title: "Tarea 1",
-      description: "Descripción de la tarea 1",
-      status: "pendiente",
-      id: "1sadasdasdasdaccffsdsf",
-    });
+    if (mockResponse.json) {
+      const jsonResponse = JSON.stringify(
+        (mockResponse.json as jest.Mock).mock.calls[0][0]
+      );
+
+      expect(jsonResponse).toEqual(JSON.stringify(task));
+    }
+    if (mockResponse.status) {
+      const status = (
+        mockResponse.status as jest.MockedFunction<
+          (
+            code: number
+          ) => Response<ErrorResponse | TaskResponse[], Record<string, any>>
+        >
+      ).mock.calls[0][0];
+
+      expect(status).toBe(200);
+    }
+  });
+
+  it("should return with invalidId when the id is not a mongooseId", async () => {
+    const newServiceCreateMock = jest.spyOn(TaskService, "findById");
+    if (mockRequest.params) {
+      mockRequest.params.id = "ID_INVALIDO";
+    }
+    const task = {
+      error: "Invalid Id",
+      code: 400,
+    };
+    newServiceCreateMock.mockResolvedValue(task);
+    await TaskController.findById(
+      mockRequest as any,
+      mockResponse as any,
+      mockNext
+    );
+    if (mockResponse.status) {
+      const status = (
+        mockResponse.status as jest.MockedFunction<
+          (
+            code: number
+          ) => Response<ErrorResponse | TaskResponse[], Record<string, any>>
+        >
+      ).mock.calls[0][0];
+
+      expect(status).toBe(400);
+    }
+  });
+  it("should return Task not found", async () => {
+    const newServiceCreateMock = jest.spyOn(TaskService, "findById");
+
+    const task = {
+      error: "Task not found",
+      code: 404,
+    };
+    newServiceCreateMock.mockResolvedValue(task);
+    await TaskController.findById(
+      mockRequest as any,
+      mockResponse as any,
+      mockNext
+    );
+    if (mockResponse.status) {
+      const status = (
+        mockResponse.status as jest.MockedFunction<
+          (
+            code: number
+          ) => Response<ErrorResponse | TaskResponse[], Record<string, any>>
+        >
+      ).mock.calls[0][0];
+
+      expect(status).toBe(404);
+    }
   });
 });

@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
 import { IUser } from "../models/User.model";
 import { RegisterRequest } from "../types/user.types";
-import { registerRequestSchema } from "../utils/validators";
 import { ErrorResponse } from "../types/error.types";
 
 class AuthController {
@@ -17,11 +16,6 @@ class AuthController {
     next: NextFunction
   ) {
     try {
-      const { error } = registerRequestSchema.validate(req.body);
-
-      if (error) {
-        return res.json({ error: error.details[0].message, code: 400 });
-      }
       const user = await AuthService.register(req.body);
       if ("error" in user) {
         const errorResponse = user;

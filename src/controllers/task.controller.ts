@@ -7,7 +7,7 @@ class TaskController {
   static async create(
     req: Request<
       Record<string, never>,
-      TaskResponse,
+      TaskResponse | ErrorResponse,
       TaskRequest,
       Record<string, never>
     >,
@@ -15,6 +15,8 @@ class TaskController {
     next: NextFunction
   ) {
     try {
+      console.log("se llama");
+
       const task = await TaskService.create(req.body);
 
       if ("error" in task) {

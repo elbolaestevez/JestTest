@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { ErrorResponse } from "../../src/types/error.types";
 import { TaskRepository } from "../../src/repositories/task.repository";
-import TaskModel from "../../src/models/Task.model";
 
 dotenv.config();
 const uri = process.env.MONGO_URI || "";
@@ -32,7 +31,7 @@ describe("findById", () => {
     try {
       const task = (await TaskService.findById(invalidTaskId)) as ErrorResponse;
       expect(task).toBeDefined();
-      expect(task.error).toContain("Id inválido");
+      expect(task.error).toContain("Invalid Id");
     } catch (error: any) {
       console.log("error", error);
     }

@@ -50,7 +50,23 @@ describe("update Task", () => {
       mockResponse as any,
       mockNext
     );
-    expect(mockResponse.status).toHaveBeenCalledWith(201);
-    expect(mockResponse.json).toHaveBeenCalledWith(updatedTask);
+    if (mockResponse.json) {
+      const jsonResponse = JSON.stringify(
+        (mockResponse.json as jest.Mock).mock.calls[0][0]
+      );
+
+      expect(jsonResponse).toEqual(JSON.stringify(updatedTask));
+    }
+    if (mockResponse.status) {
+      const status = (
+        mockResponse.status as jest.MockedFunction<
+          (
+            code: number
+          ) => Response<ErrorResponse | TaskResponse[], Record<string, any>>
+        >
+      ).mock.calls[0][0];
+
+      expect(status).toBe(201);
+    }
   });
 });

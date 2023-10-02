@@ -59,9 +59,23 @@ describe("create", () => {
       mockResponse as Response<TaskResponse[]>,
       mockNext
     );
-    console.log("tasks", tasks);
+    if (mockResponse.json) {
+      const jsonResponse = JSON.stringify(
+        (mockResponse.json as jest.Mock).mock.calls[0][0]
+      );
 
-    expect(mockResponse.status).toHaveBeenCalledWith(200);
-    expect(tasks).toHaveLength(2);
+      expect(jsonResponse).toEqual(JSON.stringify(tasks));
+    }
+    if (mockResponse.status) {
+      const status = (
+        mockResponse.status as jest.MockedFunction<
+          (
+            code: number
+          ) => Response<ErrorResponse | TaskResponse[], Record<string, any>>
+        >
+      ).mock.calls[0][0];
+
+      expect(status).toBe(200);
+    }
   });
 });

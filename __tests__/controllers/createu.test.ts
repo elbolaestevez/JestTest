@@ -2,7 +2,7 @@ import { TaskRequest, TaskResponse } from "../../src/types/tasks.types";
 import { Types } from "mongoose";
 import dotenv from "dotenv";
 import { TaskController } from "../../src/controllers/task.controller";
-import { Request, Response, NextFunction } from "express";
+import e, { Request, Response, NextFunction } from "express";
 import { generateRandomWord } from "../../src/utils/generateRandomWord";
 import { TaskService } from "../../src/services/task.service";
 import { ErrorResponse } from "../../src/types/error.types";
@@ -37,12 +37,13 @@ describe("create", () => {
     const randomWord = generateRandomWord(6);
 
     const newServiceCreateMock = jest.spyOn(TaskService, "create");
-    newServiceCreateMock.mockResolvedValue({
-      title: "Tarea 40",
+    const expectedTask = {
+      title: randomWord,
       description: "Descripción de la tarea",
       status: "pendiente",
-      id: "650c4e377b2d24a6e095af9a",
-    } as any);
+      id: userId,
+    };
+    newServiceCreateMock.mockResolvedValue(expectedTask as any);
 
     mockRequest = {
       body: {
@@ -52,21 +53,35 @@ describe("create", () => {
       },
     };
 
-    const task = await TaskController.create(
-      mockRequest as Request<
-        Record<string, never>,
-        TaskResponse,
-        TaskRequest,
-        Record<string, never>
-      >,
-
-      mockResponse as Response<TaskResponse | ErrorResponse>,
-      () => {}
+    await TaskController.create(
+      mockRequest as any,
+      mockResponse as any,
+      mockNext
     );
+    if (mockResponse.json) {
+      const jsonResponse = JSON.stringify(
+        (mockResponse.json as jest.Mock).mock.calls[0][0]
+      );
 
-    expect(mockResponse.status).toHaveBeenCalledWith(201);
-    if (task) {
-      expect(task.status).toBe("pendiente");
+      expect(jsonResponse).toEqual(
+        JSON.stringify({
+          title: randomWord,
+          description: "Descripción de la tarea",
+          status: "pendiente",
+          id: userId,
+        })
+      );
+    }
+    if (mockResponse.status) {
+      const status = (
+        mockResponse.status as jest.MockedFunction<
+          (
+            code: number
+          ) => Response<ErrorResponse | TaskResponse, Record<string, any>>
+        >
+      ).mock.calls[0][0];
+
+      expect(status).toBe(201);
     }
   });
 });

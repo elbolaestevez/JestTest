@@ -40,14 +40,33 @@ describe("create", () => {
   it("should get days elapsed", async () => {
     const newServiceCreateMock = jest.spyOn(TaskService, "getDaysElapsed");
 
-    const days = "days:1 - hours:2";
+    const days = {
+      days: 10,
+      hours: 7,
+    };
     newServiceCreateMock.mockResolvedValue(days as any);
     await TaskController.getDaysElapsed(
       mockRequest as any,
       mockResponse as any,
       mockNext
     );
-    expect(mockResponse.status).toHaveBeenCalledWith(200);
-    expect(mockResponse.json).toHaveBeenCalledWith(expect.any(String));
+    if (mockResponse.json) {
+      const jsonResponse = JSON.stringify(
+        (mockResponse.json as jest.Mock).mock.calls[0][0]
+      );
+
+      expect(jsonResponse).toEqual(JSON.stringify(days));
+    }
+    if (mockResponse.status) {
+      const status = (
+        mockResponse.status as jest.MockedFunction<
+          (
+            code: number
+          ) => Response<ErrorResponse | TaskResponse[], Record<string, any>>
+        >
+      ).mock.calls[0][0];
+
+      expect(status).toBe(200);
+    }
   });
 });
